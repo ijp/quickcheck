@@ -2,6 +2,12 @@
 (library (quickcheck quickcheck)
 (export quickcheck
         $integer
+        $boolean
+        $char
+        $string
+        $list
+        $vector
+        $bytevector
         )
 (import (rnrs)
         (srfi :27 random-bits)
@@ -9,8 +15,36 @@
         (ice-9 format)
         )
 
+(define (build-list size proc)
+  (define (loop i l)
+    (if (negative? i)
+        l
+        (loop (- i 1) (cons (proc i) l))))
+  (loop (- size 1) '()))
+
 (define ($integer)
   (random-integer 256))
+
+(define ($boolean)
+  (zero? (random-integer 2)))
+
+(define ($char)
+  (integer->char ($integer)))
+
+(define ($string)
+  (list->string (($list $char))))
+
+(define ($list generator)
+  (lambda ()
+    (build-list ($integer)
+                (lambda (_) (generator)))))
+
+(define ($vector generator)
+  (lambda ()
+    (list->vector (($list generator)))))
+
+(define ($bytevector)
+  (u8-list->bytevector (($list $integer))))
 
 (define num-tests 100)
 
