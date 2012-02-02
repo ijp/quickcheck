@@ -14,6 +14,9 @@
         check
         implies
         ->
+        one-of
+        elements
+        return
         )
 (import (rnrs)
         (srfi :27 random-bits)
@@ -98,5 +101,21 @@
                 (loop (+ i 1) (+ i j))
                 (fail i items))))))
   (loop 0 0))
+
+(define (vector-pick vector)
+  (vector-ref vector (random-integer (vector-length vector))))
+
+(define (elements list)
+  (let ((v (list->vector list)))
+    (lambda ()
+      (vector-pick v))))
+
+(define (return elem)
+  (lambda () elem))
+
+(define (one-of gen0 . genrest)
+  ;; should this take generators, or just items?
+  (lambda ()
+    (call (call (elements (cons gen0 genrest))))))
 
 )
