@@ -2,9 +2,12 @@
 (library (quickcheck quickcheck)
 (export quickcheck
         $integer
+        $real
         $boolean
         $char
         $string
+        $symbol
+        $pair
         $list
         $vector
         $bytevector
@@ -28,6 +31,8 @@
 (define ($integer)
   (random-integer 256))
 
+(define $real random-real)
+
 (define ($boolean)
   (zero? (random-integer 2)))
 
@@ -39,6 +44,10 @@
 
 (define ($symbol)
   (string->symbol ($string)))
+
+(define ($pair car cdr)
+  (lambda ()
+    (cons (car) (cdr))))
 
 (define ($list generator)
   (lambda ()
