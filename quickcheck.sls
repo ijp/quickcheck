@@ -84,7 +84,7 @@
           (guard (exn
                   ((predicate-failed-condition? exn)
                    (loop i (+ j 1)))
-                  (else #f))
+                  (else (fail i items)))
             (if (apply test items)
                 (loop (+ i 1) (+ i j))
                 (fail i items))))))
