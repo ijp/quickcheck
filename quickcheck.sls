@@ -34,6 +34,7 @@
         >>=
         (rename ($call call))
         such-that
+        frequency
         )
 (import (rnrs)
         (srfi :27 random-bits)
@@ -155,5 +156,39 @@
          (if (test? x)
              (return x)
              (such-that test? gen)))))
+
+(define (frequency frequency/generator-alist)
+  (assert (not (null? frequency/generator-alist)))
+  (let* ([cumulative-frequency-table
+          (make-cumulative-frequency-vector
+           (map car frequency/generator-alist))]
+         [generator-table
+          (list->vector (map cdr frequency/generator-alist))]
+         [total (vector-ref cumulative-frequency-table
+                            (- (vector-length cumulative-frequency-table) 1))])
+    (lambda ()
+      (let ((choice (* total (random-real))))
+        ;; linear, should really use a binary search instead
+        ((vector-ref generator-table
+                     (vector-index (lambda (elem) (> elem choice))
+                                   cumulative-frequency-table)))))))
+
+(define (make-cumulative-frequency-vector frequency-list)
+  (let ((v (make-vector (length frequency-list))))
+    (let loop ((index 0) (total 0) (list frequency-list))
+      (unless (null? list)
+        (let ((frequency (+ total (car list))))
+          (vector-set! v index frequency)
+          (loop (+ index 1)
+                frequency
+                (cdr list)))))
+    v))
+
+(define (vector-index proc vector)
+  (let ((len (vector-length vector)))
+    (let loop ((index 0))
+      (cond [(= index len) #f]
+            [(proc (vector-ref vector index)) index]
+            [else (loop (+ index 1))]))))
 
 )
