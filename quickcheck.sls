@@ -1,4 +1,17 @@
 #!r6rs
+;;; quickcheck.sls --- A quickcheck-alike for scheme
+
+;; Copyright (C) 2012 Ian Price <ianprice90@googlemail.com>
+
+;; Author: Ian Price <ianprice90@googlemail.com>
+
+;; This program is free software, you can redistribute it and/or
+;; modify it under the terms of the new-style BSD license.
+
+;; You should have received a copy of the BSD license along with this
+;; program. If not, see <http://www.debian.org/misc/bsd.license>.
+
+;;; Code:
 (library (quickcheck)
 (export quickcheck
         $integer
