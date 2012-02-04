@@ -1,5 +1,5 @@
 #!r6rs
-(library (quickcheck quickcheck)
+(library (quickcheck)
 (export quickcheck
         $integer
         $real
