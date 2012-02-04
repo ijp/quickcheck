@@ -17,6 +17,10 @@
         one-of
         elements
         return
+        $=>
+        >>=
+        (rename ($call call))
+        such-that
         )
 (import (rnrs)
         (srfi :27 random-bits)
@@ -117,5 +121,26 @@
   ;; should this take generators, or just items?
   (lambda ()
     (call (call (elements (cons gen0 genrest))))))
+
+;; I've been going back and forth over names for this, and I haven't
+;; found one I like. Current candidates are: map (and just letting the
+;; user rename themselves), fmap, convert, morph, generator-map, $map, $=>
+(define ($=> g f)
+  (lambda ()
+    (f (g))))
+
+(define (>>= m f) ;; call it bind?
+  (lambda () ((f (m)))))
+
+(define ($call f . args)
+  (lambda ()
+    ((apply f args))))
+
+(define (such-that test? gen)
+  (>>= gen
+       (lambda (x)
+         (if (test? x)
+             (return x)
+             (such-that test? gen)))))
 
 )
